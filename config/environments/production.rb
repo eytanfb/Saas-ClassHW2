@@ -15,6 +15,9 @@ Rottenpotatoes::Application.configure do
   config.assets.compress = true
 
   # DO fallback to assets pipeline if a precompiled asset is missed
+  # BEFORE - what 'rails new' generates for production.rb:
+  config.assets.compile = false
+  # AFTER - this is what you should change it to:
   config.assets.compile = true
 
   # Generate digests for assets URLs
