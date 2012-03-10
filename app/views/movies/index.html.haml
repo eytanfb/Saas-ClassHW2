@@ -2,14 +2,22 @@
 -#{class: "hilite" if params[:order] == 'title'}
 %h1 All Movies
 
+= form_tag movies_path, :method => :get do
+  = hidden_field_tag :order, params[:order] 
+  Include:
+  - @all_ratings.each do |rating|
+    = rating
+    = check_box_tag "ratings[#{rating}]", rating, @chosen_ratings.keys.include?(rating)
+  = submit_tag 'Refresh'
+
 %table#movies
   %thead
     %tr
       %th{class: ("hilite" if params[:order] == 'title')}
-        = link_to 'Movie Title', movies_path(:order => 'title'), id: 'title_header'
+        = link_to 'Movie Title', movies_path(:order => 'title', :ratings => @chosen_ratings), id: 'title_header'
       %th Rating
       %th{class: ("hilite" if params[:order] == 'release_date')}
-        = link_to 'Release Date', movies_path(:order => 'release_date'), id: 'release_date_header'
+        = link_to 'Release Date', movies_path(:order => 'release_date', :ratings => @chosen_ratings), id: 'release_date_header'
       %th More Info
   %tbody
     - @movies.each do |movie|
