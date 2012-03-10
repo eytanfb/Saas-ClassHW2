@@ -3,6 +3,7 @@
 %h1 All Movies
 
 = form_tag movies_path, :method => :get do
+  = hidden_field_tag :order, params[:order] 
   Include:
   - @all_ratings.each do |rating|
     = rating
