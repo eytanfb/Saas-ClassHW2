@@ -7,7 +7,12 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.ratings
+    @chosen_ratings = params[:ratings] ||= {}
     @movies = Movie.order(params[:order])
+    if @chosen_ratings.length > 0
+      @movies = @movies.where(:rating => @chosen_ratings.keys)
+    end
   end
 
   def new
