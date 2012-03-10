@@ -7,9 +7,11 @@ class MoviesController < ApplicationController
   end
 
   def index
+    remember_params
+    user_settings = session[:remember]
     @all_ratings = Movie.ratings
-    @chosen_ratings = params[:ratings] ||= {}
-    @movies = Movie.order(params[:order])
+    @chosen_ratings = user_settings[:ratings] ||= {}
+    @movies = Movie.order(user_settings[:order])
     if @chosen_ratings.length > 0
       @movies = @movies.where(:rating => @chosen_ratings.keys)
     end
@@ -41,6 +43,22 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+  
+  private
+  
+  def remember_params
+    old_user_settings = session[:remember]
+    params[:order] ||= old_user_settings[:order]
+    params[:ratings] ||= old_user_settings[:ratings] if old_user_settings[:ratings].keys.any?
+    session[:remember] = {
+      order: params[:order], 
+      ratings: params[:ratings]
+      }
+    new_user_settings = session[:remember]
+    if new_user_settings.nil?
+      redirect_to movies_path(new_user_settings) and return
+    end
   end
 
 end
