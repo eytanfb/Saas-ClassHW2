@@ -49,18 +49,23 @@ class MoviesController < ApplicationController
   
   def remember_params
     old_user_settings = session[:remember]
-    if old_user_settings != nil
+    if params[:order].nil? or params[:ratings].nil?
       params[:order] ||= old_user_settings[:order]
-      params[:ratings] ||= old_user_settings[:ratings] if old_user_settings[:ratings].keys.any?
-    end
+      params[:ratings] ||= old_user_settings[:ratings]
     session[:remember] = {
       order: params[:order], 
       ratings: params[:ratings]
       }
     new_user_settings = session[:remember]
-    if new_user_settings.nil?
-      redirect_to movies_path(new_user_settings) and return
+    redirect_to movies_path(new_user_settings) and return
     end
+    session[:remember] = {
+      order: params[:order], 
+      ratings: params[:ratings]
+      }
+    #if new_user_settings.nil?
+     # redirect_to movies_path(new_user_settings) and return
+    #end
   end
 
 end
