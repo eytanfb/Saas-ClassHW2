@@ -49,8 +49,10 @@ class MoviesController < ApplicationController
   
   def remember_params
     old_user_settings = session[:remember]
-    params[:order] ||= old_user_settings[:order]
-    params[:ratings] ||= old_user_settings[:ratings] if old_user_settings[:ratings].keys.any?
+    if old_user_settings != nil
+      params[:order] ||= old_user_settings[:order]
+      params[:ratings] ||= old_user_settings[:ratings] if old_user_settings[:ratings].keys.any?
+    end
     session[:remember] = {
       order: params[:order], 
       ratings: params[:ratings]
