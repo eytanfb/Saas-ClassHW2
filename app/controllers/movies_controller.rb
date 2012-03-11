@@ -48,6 +48,7 @@ class MoviesController < ApplicationController
   private
   
   def remember_params
+    session[:remember] ||= {}
     old_user_settings = session[:remember]
     if params[:order] == old_user_settings[:order] and params[:ratings] == old_user_settings[:ratings]
       redirect_to movies_path
