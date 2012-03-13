@@ -15,15 +15,24 @@ class MoviesController < ApplicationController
       redirect_to movies_path(new_user_settings) and return
     end
     
+    redirect = false
     if params[:order] == nil and old_settings[:order] != nil
        params[:order] = old_settings[:order]
+       redirect = true
     end
     if params[:ratings] == nil and old_settings[:ratings] != nil
        params[:ratings] = old_settings[:ratings]
+       redirect = true
     end
     
     if params[:ratings] != old_settings[:ratings] or params[:order] != old_settings[:order]
       new_user_settings = enter_settings
+      redirect_to movies_path(new_user_settings) and return
+    end
+    
+    if redirect
+      enter_settings
+      new_user_settings = session[:remember]
       redirect_to movies_path(new_user_settings) and return
     end
   
