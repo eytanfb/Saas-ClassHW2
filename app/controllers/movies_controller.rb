@@ -7,11 +7,26 @@ class MoviesController < ApplicationController
   end
 
   def index
-    remember_params
-    user_settings = session[:remember]
+    
+    old_settings = session[:remember] ||= {}
+    
+    redirect = false
+    if params[:order] == nil and old_settings[:order] != nil
+      params[:order] = old_settings[:order]
+      redirect = true
+    end
+    if params[:ratings] == nil and old_settings[:ratings] != nil
+      params[:ratings] = old_settings[:ratings]
+      redirect = true
+    end
+    if redirect
+      redirect_to movies_path(params)
+    end
+    
+    enter_settings
     @all_ratings = Movie.ratings
-    @chosen_ratings = user_settings[:ratings] ||= {}
-    @movies = Movie.order(user_settings[:order])
+    @chosen_ratings = old_settings[:ratings] ||= {}
+    @movies = Movie.order(old_settings[:order])
     if @chosen_ratings.length > 0
       @movies = @movies.where(:rating => @chosen_ratings.keys)
     end
@@ -46,22 +61,6 @@ class MoviesController < ApplicationController
   end
   
   private
-  
-  def remember_params
-    session[:remember] ||= {}
-    old_user_settings = session[:remember]
-    if params[:order] == old_user_settings[:order] and params[:ratings] == old_user_settings[:ratings]
-      redirect_to movies_path
-    end
-    if params[:order].nil? 
-      params[:order] = old_user_settings[:order]
-    end
-    if params[:ratings].nil?
-      params[:ratings] = old_user_settings[:ratings]
-    end
-    enter_settings
-    new_user_settings = session[:remember]
-  end
   
   def enter_settings
     session[:remember] = {
